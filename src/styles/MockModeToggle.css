@@ -78,3 +78,7 @@ input:checked + .toggle-slider:before {
 .mock-mode-toggle:hover .toggle-tooltip {
   opacity: 1;
 }
+
+.visually-hidden {
+  display: none;
+} 
