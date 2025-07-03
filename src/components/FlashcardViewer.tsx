@@ -75,7 +75,11 @@ const FlashcardViewer: React.FC<FlashcardViewerProps> = ({ flashcardSet, onReset
     <div className="flashcard-viewer">
       <div className="flashcard-header">
         <h2>{flashcardSet.title}</h2>
-        <p className="source">Source: {flashcardSet.source}</p>
+        <p className="source">
+          Source:
+          {' '}
+          {flashcardSet.source}
+        </p>
         <p className="card-count">
           {flashcardSet.cards.length}
           {' '}

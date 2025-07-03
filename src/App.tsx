@@ -36,7 +36,13 @@ const App: React.FC = () => {
       </main>
 
       <footer>
-        <p>© {new Date().getFullYear()} Flashcard Extractor</p>
+        <p>
+          ©
+          {' '}
+          {new Date().getFullYear()}
+          {' '}
+          Flashcard Extractor
+        </p>
       </footer>
     </div>
   );
