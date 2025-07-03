@@ -1,25 +1,27 @@
+import {
+  render, screen, fireEvent, waitFor,
+} from '@testing-library/react';
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+
 import InputForm from '../../src/components/InputForm';
+import { getLLMConfig } from '../../src/config';
 import { extractFlashcards } from '../../src/services/llmService';
 import { fetchWikipediaContent } from '../../src/services/wikipediaService';
-import { getLLMConfig } from '../../src/config';
-import userEvent from '@testing-library/user-event';
 
 jest.mock('../../src/services/llmService', () => ({
-  extractFlashcards: jest.fn()
+  extractFlashcards: jest.fn(),
 }));
 
 jest.mock('../../src/services/wikipediaService', () => ({
-  fetchWikipediaContent: jest.fn()
+  fetchWikipediaContent: jest.fn(),
 }));
 
 jest.mock('../../src/config', () => ({
   getLLMConfig: jest.fn().mockReturnValue({
     baseUrl: 'http://test-api.com',
     model: 'test-model',
-    defaultApiKey: 'default-test-key'
-  })
+    defaultApiKey: 'default-test-key',
+  }),
 }));
 
 const mockExtractFlashcards = extractFlashcards as jest.MockedFunction<typeof extractFlashcards>;
@@ -40,7 +42,7 @@ describe('InputForm Component', () => {
         setFlashcardSet={mockSetFlashcardSet}
         setLoading={mockSetLoading}
         setError={mockSetError}
-      />
+      />,
     );
 
     expect(screen.getByRole('button', { name: 'Wikipedia URL' })).toBeInTheDocument();
@@ -54,7 +56,7 @@ describe('InputForm Component', () => {
         setFlashcardSet={mockSetFlashcardSet}
         setLoading={mockSetLoading}
         setError={mockSetError}
-      />
+      />,
     );
 
     const textModeButton = screen.getByRole('button', { name: 'Custom Text' });
@@ -67,16 +69,17 @@ describe('InputForm Component', () => {
     fireEvent.click(urlModeButton);
 
     expect(screen.getByRole('button', { name: 'Wikipedia URL' })).toHaveClass('active');
-    expect(screen.getByPlaceholderText('https://en.wikipedia.org/wiki/Artificial_intelligence')).toBeInTheDocument();
+    const wikiPlaceholder = 'https://en.wikipedia.org/wiki/Artificial_intelligence';
+    expect(screen.getByPlaceholderText(wikiPlaceholder)).toBeInTheDocument();
   });
 
-  test('shows error when submitting without input', async () => {
+  test('shows error when submitting without input', () => {
     render(
       <InputForm
         setFlashcardSet={mockSetFlashcardSet}
         setLoading={mockSetLoading}
         setError={mockSetError}
-      />
+      />,
     );
 
     const submitButton = screen.getByRole('button', { name: 'Generate Flashcards' });
@@ -85,19 +88,19 @@ describe('InputForm Component', () => {
     expect(mockSetError).toHaveBeenCalledWith('Please enter a Wikipedia URL or text');
   });
 
-  test('shows error when API key is missing in config', async () => {
+  test('shows error when API key is missing in config', () => {
     (getLLMConfig as jest.Mock).mockReturnValueOnce({
       baseUrl: 'http://test-api.com',
       model: 'test-model',
-      defaultApiKey: ''
+      defaultApiKey: '',
     });
-    
+
     render(
       <InputForm
         setFlashcardSet={mockSetFlashcardSet}
         setLoading={mockSetLoading}
         setError={mockSetError}
-      />
+      />,
     );
 
     const inputField = screen.getByPlaceholderText('https://en.wikipedia.org/wiki/Artificial_intelligence');
@@ -114,11 +117,11 @@ describe('InputForm Component', () => {
   test('processes Wikipedia URL input correctly', async () => {
     const mockWikiContent = {
       title: 'React',
-      content: 'React is a JavaScript library for building user interfaces.'
+      content: 'React is a JavaScript library for building user interfaces.',
     };
-    
+
     const mockFlashcards = [
-      { id: '1', question: 'What is React?', answer: 'A JavaScript library for building user interfaces.' }
+      { id: '1', question: 'What is React?', answer: 'A JavaScript library for building user interfaces.' },
     ];
 
     mockFetchWikipediaContent.mockResolvedValue(mockWikiContent);
@@ -129,7 +132,7 @@ describe('InputForm Component', () => {
         setFlashcardSet={mockSetFlashcardSet}
         setLoading={mockSetLoading}
         setError={mockSetError}
-      />
+      />,
     );
 
     const urlInput = screen.getByPlaceholderText('https://en.wikipedia.org/wiki/Artificial_intelligence');
@@ -141,11 +144,13 @@ describe('InputForm Component', () => {
     expect(mockSetLoading).toHaveBeenCalledWith(true);
 
     await waitFor(() => {
-      expect(mockFetchWikipediaContent).toHaveBeenCalledWith('https://en.wikipedia.org/wiki/React_(JavaScript_library)');
+      expect(mockFetchWikipediaContent).toHaveBeenCalledWith(
+        'https://en.wikipedia.org/wiki/React_(JavaScript_library)'
+      );
       expect(mockExtractFlashcards).toHaveBeenCalledWith(mockWikiContent.content, undefined, expect.any(Boolean));
       expect(mockSetFlashcardSet).toHaveBeenCalledWith(expect.objectContaining({
         source: 'https://en.wikipedia.org/wiki/React_(JavaScript_library)',
-        cards: mockFlashcards
+        cards: mockFlashcards,
       }));
       expect(mockSetLoading).toHaveBeenCalledWith(false);
     });
@@ -153,7 +158,7 @@ describe('InputForm Component', () => {
 
   test('processes custom text input correctly', async () => {
     const mockFlashcards = [
-      { id: '1', question: 'What is TypeScript?', answer: 'A superset of JavaScript that adds static typing.' }
+      { id: '1', question: 'What is TypeScript?', answer: 'A superset of JavaScript that adds static typing.' },
     ];
 
     mockExtractFlashcards.mockResolvedValue(mockFlashcards);
@@ -163,7 +168,7 @@ describe('InputForm Component', () => {
         setFlashcardSet={mockSetFlashcardSet}
         setLoading={mockSetLoading}
         setError={mockSetError}
-      />
+      />,
     );
 
     // Switch to custom text mode
@@ -185,28 +190,29 @@ describe('InputForm Component', () => {
       expect(mockExtractFlashcards).toHaveBeenCalledWith(
         'TypeScript is a superset of JavaScript that adds static typing.',
         undefined,
-        expect.any(Boolean)
+        expect.any(Boolean),
       );
       expect(mockSetFlashcardSet).toHaveBeenCalledWith(expect.objectContaining({
         title: 'Custom Text Flashcards',
         source: 'Custom text',
-        cards: mockFlashcards
+        cards: mockFlashcards,
       }));
       expect(mockSetLoading).toHaveBeenCalledWith(false);
     });
   });
 
-  test('validates Wikipedia URL correctly', async () => {
+  test('validates Wikipedia URL correctly', () => {
     render(
       <InputForm
         setFlashcardSet={mockSetFlashcardSet}
         setLoading={mockSetLoading}
         setError={mockSetError}
-      />
+      />,
     );
 
     // Enter invalid URL
-    const urlInput = screen.getByPlaceholderText('https://en.wikipedia.org/wiki/Artificial_intelligence');
+    const wikiPlaceholder = 'https://en.wikipedia.org/wiki/Artificial_intelligence';
+    const urlInput = screen.getByPlaceholderText(wikiPlaceholder);
     fireEvent.change(urlInput, { target: { value: 'https://example.com/not-wikipedia' } });
 
     // Submit the form
@@ -221,11 +227,11 @@ describe('InputForm Component', () => {
   test('extracts title from Wikipedia URL correctly', async () => {
     const mockWikiContent = {
       title: 'Artificial Intelligence',
-      content: 'AI content here'
+      content: 'AI content here',
     };
-    
+
     const mockFlashcards = [
-      { id: '1', question: 'What is AI?', answer: 'Artificial Intelligence' }
+      { id: '1', question: 'What is AI?', answer: 'Artificial Intelligence' },
     ];
 
     mockFetchWikipediaContent.mockResolvedValue(mockWikiContent);
@@ -236,7 +242,7 @@ describe('InputForm Component', () => {
         setFlashcardSet={mockSetFlashcardSet}
         setLoading={mockSetLoading}
         setError={mockSetError}
-      />
+      />,
     );
 
     // Enter URL with underscores that should be converted to spaces in title
@@ -250,7 +256,7 @@ describe('InputForm Component', () => {
     await waitFor(() => {
       expect(mockSetFlashcardSet).toHaveBeenCalledWith(expect.objectContaining({
         title: 'Artificial intelligence', // Underscores replaced with spaces
-        source: 'https://en.wikipedia.org/wiki/Artificial_intelligence'
+        source: 'https://en.wikipedia.org/wiki/Artificial_intelligence',
       }));
     });
   });
@@ -264,7 +270,7 @@ describe('InputForm Component', () => {
         setFlashcardSet={mockSetFlashcardSet}
         setLoading={mockSetLoading}
         setError={mockSetError}
-      />
+      />,
     );
 
     // Enter valid URL
@@ -290,7 +296,7 @@ describe('InputForm Component', () => {
         setFlashcardSet={mockSetFlashcardSet}
         setLoading={mockSetLoading}
         setError={mockSetError}
-      />
+      />,
     );
 
     // Enter valid URL
@@ -310,9 +316,9 @@ describe('InputForm Component', () => {
   test('passes mock mode setting to extractFlashcards', async () => {
     const mockWikiContent = {
       title: 'React',
-      content: 'React content'
+      content: 'React content',
     };
-    
+
     const mockFlashcards = [{ id: '1', question: 'Q', answer: 'A' }];
 
     mockFetchWikipediaContent.mockResolvedValue(mockWikiContent);
@@ -321,7 +327,7 @@ describe('InputForm Component', () => {
     // Mock localStorage for mock mode setting
     const localStorageMock = {
       getItem: jest.fn().mockReturnValue('true'),
-      setItem: jest.fn()
+      setItem: jest.fn(),
     };
     Object.defineProperty(window, 'localStorage', { value: localStorageMock });
 
@@ -330,7 +336,7 @@ describe('InputForm Component', () => {
         setFlashcardSet={mockSetFlashcardSet}
         setLoading={mockSetLoading}
         setError={mockSetError}
-      />
+      />,
     );
 
     // Enter URL

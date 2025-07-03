@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { FlashcardSet } from './types';
-import InputForm from './components/InputForm';
+
 import FlashcardViewer from './components/FlashcardViewer';
+import InputForm from './components/InputForm';
+import { FlashcardSet } from './types';
 import './styles/App.css';
 
 const App: React.FC = () => {
@@ -18,15 +19,15 @@ const App: React.FC = () => {
 
       <main>
         {!flashcardSet ? (
-          <InputForm 
-            setFlashcardSet={setFlashcardSet} 
-            setLoading={setLoading} 
-            setError={setError} 
+          <InputForm
+            setFlashcardSet={setFlashcardSet}
+            setLoading={setLoading}
+            setError={setError}
           />
         ) : (
-          <FlashcardViewer 
-            flashcardSet={flashcardSet} 
-            onReset={() => setFlashcardSet(null)} 
+          <FlashcardViewer
+            flashcardSet={flashcardSet}
+            onReset={() => setFlashcardSet(null)}
           />
         )}
 
@@ -35,7 +36,12 @@ const App: React.FC = () => {
       </main>
 
       <footer>
-        <p>© {new Date().getFullYear()} Flashcard Extractor</p>
+        <p>
+          ©
+          {new Date().getFullYear()}
+          {' '}
+          Flashcard Extractor
+        </p>
       </footer>
     </div>
   );

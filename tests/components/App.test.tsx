@@ -1,19 +1,20 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
+import React from 'react';
+
 import App from '../../src/App';
 
 jest.mock('../../src/components/InputForm', () => ({
   __esModule: true,
-  default: () => <div data-testid="mock-input-form">Mock Input Form</div>
+  default: (): JSX.Element => <div data-testid="mock-input-form">Mock Input Form</div>,
 }));
 
 jest.mock('../../src/components/FlashcardViewer', () => ({
   __esModule: true,
-  default: () => <div data-testid="mock-flashcard-viewer">Mock Flashcard Viewer</div>
+  default: (): JSX.Element => <div data-testid="mock-flashcard-viewer">Mock Flashcard Viewer</div>,
 }));
 
 describe('App Component', () => {
-  test('renders header with title', () => {
+  test('renders header with title', (): void => {
     render(<App />);
     expect(screen.getByText('Flashcard Extractor')).toBeInTheDocument();
     expect(screen.getByText('Extract flashcards from Wikipedia articles or text')).toBeInTheDocument();

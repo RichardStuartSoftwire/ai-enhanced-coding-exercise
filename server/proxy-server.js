@@ -1,7 +1,8 @@
-const express = require('express');
-const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+
+const cors = require('cors');
+const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 require('dotenv').config();
 
@@ -26,9 +27,7 @@ try {
   mockFlashcardResponse = { choices: [{ message: { content: { flashcards: [] } } }] };
 }
 
-const isMockMode = (req) => {
-  return req.query.mock === 'true' || req.headers['x-use-mock'] === 'true';
-};
+const isMockMode = (req) => req.query.mock === 'true' || req.headers['x-use-mock'] === 'true';
 
 app.use('/api/v1/chat/completions', (req, res, next) => {
   if (isMockMode(req)) {
@@ -49,33 +48,32 @@ const inferenceProxy = createProxyMiddleware({
   },
   onProxyRes: (proxyRes, req, res) => {
     console.log('Received response from inference server:', proxyRes.statusCode);
-    
+
     // Handle response data to ensure content is a valid JSON string
     if (req.url.includes('/chat/completions')) {
       const originalBody = [];
       proxyRes.on('data', (chunk) => {
         originalBody.push(chunk);
       });
-      
+
       proxyRes.on('end', () => {
         try {
           const bodyString = Buffer.concat(originalBody).toString();
           const bodyJson = JSON.parse(bodyString);
-          
+
           // Check if content is an object and convert it to a string if needed
           if (bodyJson.choices && bodyJson.choices[0] && bodyJson.choices[0].message) {
-            const content = bodyJson.choices[0].message.content;
-            
+            const { content } = bodyJson.choices[0].message;
+
             // If content is an object, stringify it
             if (content && typeof content === 'object') {
               bodyJson.choices[0].message.content = JSON.stringify(content);
-              
+
               // Replace the response with our modified version
               const modifiedBody = JSON.stringify(bodyJson);
               res.setHeader('content-length', Buffer.byteLength(modifiedBody));
               res.end(modifiedBody);
               console.log('Modified response to ensure content is a valid JSON string');
-              return;
             }
           }
         } catch (error) {
@@ -87,8 +85,8 @@ const inferenceProxy = createProxyMiddleware({
   },
   onError: (err, req, res) => {
     console.error('Proxy error:', err);
-    res.status(500).send('Proxy Error: ' + err.message);
-  }
+    res.status(500).send(`Proxy Error: ${err.message}`);
+  },
 });
 
 app.use('/api/v1', inferenceProxy);
@@ -101,5 +99,5 @@ const PORT = process.env.PROXY_PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Proxy server running on http://localhost:${PORT}`);
   console.log(`Forwarding requests from http://localhost:${PORT}/api/v1 to ${process.env.INFERENCE_SERVER_URL || 'http://localhost:1234'}`);
-  console.log(`Mock mode available: add ?mock=true to URL or set X-Use-Mock header to 'true'`);
+  console.log('Mock mode available: add ?mock=true to URL or set X-Use-Mock header to \'true\'');
 });

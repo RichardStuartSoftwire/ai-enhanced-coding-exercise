@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+
 import { FlashcardSet } from '../types';
 import '../styles/FlashcardViewer.css';
 
@@ -33,19 +34,19 @@ const FlashcardViewer: React.FC<FlashcardViewerProps> = ({ flashcardSet, onReset
   const exportAsCSV = () => {
     const csvContent = [
       ['Question', 'Answer'],
-      ...flashcardSet.cards.map(card => [card.question, card.answer])
+      ...flashcardSet.cards.map((card) => [card.question, card.answer]),
     ]
-      .map(row => row.map(cell => `"${cell.replace(/"/g, '""')}"`).join(','))
+      .map((row) => row.map((cell) => `"${cell.replace(/"/g, '""')}"`).join(','))
       .join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
-    
+
     link.setAttribute('href', url);
     link.setAttribute('download', `${flashcardSet.title.replace(/\s+/g, '_')}_flashcards.csv`);
     link.style.visibility = 'hidden';
-    
+
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -56,11 +57,11 @@ const FlashcardViewer: React.FC<FlashcardViewerProps> = ({ flashcardSet, onReset
     const blob = new Blob([jsonContent], { type: 'application/json' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
-    
+
     link.setAttribute('href', url);
     link.setAttribute('download', `${flashcardSet.title.replace(/\s+/g, '_')}_flashcards.json`);
     link.style.visibility = 'hidden';
-    
+
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -74,9 +75,14 @@ const FlashcardViewer: React.FC<FlashcardViewerProps> = ({ flashcardSet, onReset
     <div className="flashcard-viewer">
       <div className="flashcard-header">
         <h2>{flashcardSet.title}</h2>
-        <p className="source">Source: {flashcardSet.source}</p>
+        <p className="source">
+          Source:
+          {flashcardSet.source}
+        </p>
         <p className="card-count">
-          {flashcardSet.cards.length} flashcards generated
+          {flashcardSet.cards.length}
+          {' '}
+          flashcards generated
         </p>
       </div>
 
@@ -117,8 +123,8 @@ const FlashcardViewer: React.FC<FlashcardViewerProps> = ({ flashcardSet, onReset
           )}
 
           <div className="card-navigation">
-            <button 
-              onClick={handlePrevious} 
+            <button
+              onClick={handlePrevious}
               disabled={!hasCards || currentIndex === 0}
             >
               Previous
@@ -126,8 +132,8 @@ const FlashcardViewer: React.FC<FlashcardViewerProps> = ({ flashcardSet, onReset
             <span className="card-counter">
               {hasCards ? `${currentIndex + 1} / ${flashcardSet.cards.length}` : '0 / 0'}
             </span>
-            <button 
-              onClick={handleNext} 
+            <button
+              onClick={handleNext}
               disabled={!hasCards || currentIndex === flashcardSet.cards.length - 1}
             >
               Next

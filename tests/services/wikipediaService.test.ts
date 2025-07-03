@@ -1,4 +1,5 @@
 import axios from 'axios';
+
 import { fetchWikipediaContent } from '../../src/services/wikipediaService';
 
 jest.mock('axios');
@@ -7,17 +8,17 @@ const mockedAxios = axios as jest.Mocked<typeof axios>;
 describe('Wikipedia Service', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     const mockElement = {
       innerHTML: '',
       querySelector: jest.fn().mockReturnValue({
         textContent: 'Parsed content',
         querySelectorAll: jest.fn().mockReturnValue([{
-          remove: jest.fn()
-        }])
-      })
+          remove: jest.fn(),
+        }]),
+      }),
     };
-    
+
     document.createElement = jest.fn().mockReturnValue(mockElement);
   });
 
@@ -27,10 +28,10 @@ describe('Wikipedia Service', () => {
         parse: {
           title: 'Test Article',
           text: {
-            '*': '<div id="mw-content-text">Test Wikipedia content</div>'
-          }
-        }
-      }
+            '*': '<div id="mw-content-text">Test Wikipedia content</div>',
+          },
+        },
+      },
     };
 
     mockedAxios.get.mockResolvedValue(mockWikiResponse);
@@ -38,12 +39,12 @@ describe('Wikipedia Service', () => {
     const result = await fetchWikipediaContent('https://en.wikipedia.org/wiki/Test_Article');
 
     expect(mockedAxios.get).toHaveBeenCalledWith(
-      expect.stringContaining('https://en.wikipedia.org/w/api.php?action=parse&page=Test_Article')
+      expect.stringContaining('https://en.wikipedia.org/w/api.php?action=parse&page=Test_Article'),
     );
-    
+
     expect(result).toEqual({
       title: 'Test Article',
-      content: 'Parsed content'
+      content: 'Parsed content',
     });
   });
 
@@ -55,9 +56,9 @@ describe('Wikipedia Service', () => {
     const mockErrorResponse = {
       data: {
         error: {
-          info: 'Page not found'
-        }
-      }
+          info: 'Page not found',
+        },
+      },
     };
 
     mockedAxios.get.mockResolvedValue(mockErrorResponse);
@@ -67,7 +68,7 @@ describe('Wikipedia Service', () => {
 
   test('throws error when Wikipedia API response is missing parse data', async () => {
     const mockInvalidResponse = {
-      data: {}
+      data: {},
     };
 
     mockedAxios.get.mockResolvedValue(mockInvalidResponse);
