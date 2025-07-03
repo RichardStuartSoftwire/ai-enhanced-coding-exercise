@@ -1,5 +1,7 @@
 # Project Coding Standards
 
+This is an app for extracting flashcards from Wikipedia articles or custom text. It's built with React and TypeScript, using a server proxy for infrequent LLM API interactions that adhere to OpenAI's API documentation. The app allows users to view and inspect the generated flashcards, with additional features for exporting the data as JSON or CSV files.
+
 <typescript_standards>
 - Use strict typing everywhere - no 'any' types allowed
 - Avoid using comments in code
@@ -27,15 +29,15 @@
 </styling_guidelines>
 
 <testing_standards>
-- Write tests in Jest with React Testing Library
+- Write tests in Jest with React Testing Library, make sure new/changed functionality gets new tests
 - Place tests in the /tests directory with .test.ts(x) or .spec.ts(x) extensions
 - Aim for high test coverage (run tests with `npm test -- --coverage`)
 - Mock CSS imports in tests
 </testing_standards>
 
 <linting_workflow>
-- Run `npm run lint` to check for linting errors
-- Use `npm run lint:fix` to automatically fix linting issues
+- Before linting, run `npm run lint:fix` to automatically fix linting issues
+- Always run `npm run lint` to check for linting errors after implementing a feature
 - ESLint uses Airbnb TypeScript config with strict typing rules
 - No console.log, debugger, or alert statements in production code
 </linting_workflow>
