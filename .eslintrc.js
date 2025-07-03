@@ -93,5 +93,5 @@ module.exports = {
       },
     },
   },
-  ignorePatterns: ['node_modules', 'build', 'dist', 'coverage', '*.config.js', 'tests/__mocks__'],
+  ignorePatterns: ['node_modules', 'build', 'dist', 'coverage', '*.config.js', 'tests'],
 };
