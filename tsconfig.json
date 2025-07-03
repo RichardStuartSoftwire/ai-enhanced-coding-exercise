@@ -16,5 +16,6 @@
     "noEmit": false,
     "jsx": "react-jsx"
   },
-  "include": ["src"]
+  "include": ["src", "tests"],
+  "exclude": ["node_modules", "tests/__mocks__"]
 }
