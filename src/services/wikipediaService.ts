@@ -17,41 +17,7 @@ interface WikipediaContent {
   content: string;
 }
 
-export const fetchWikipediaContent = async (url: string): Promise<WikipediaContent> => {
-  try {
-    const title = extractTitleFromUrl(url);
-
-    if (!title) {
-      throw new Error('Invalid Wikipedia URL');
-    }
-
-    const apiUrl = `https://en.wikipedia.org/w/api.php?action=parse&page=${title}&format=json&prop=text&origin=*`;
-
-    const response = await axios.get<WikipediaResponse>(apiUrl);
-
-    if (response.data.error) {
-      throw new Error(`Wikipedia API error: ${response.data.error.info}`);
-    }
-
-    if (!response.data.parse) {
-      throw new Error('Failed to parse Wikipedia content');
-    }
-
-    const htmlContent = response.data.parse.text['*'];
-    const plainText = extractTextFromHtml(htmlContent);
-
-    return {
-      title: response.data.parse.title,
-      content: plainText,
-    };
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(`Failed to fetch Wikipedia content: ${error.message}`);
-    }
-    throw error;
-  }
-};
-
+// Helper functions defined once at the top to fix no-use-before-define
 const extractTitleFromUrl = (url: string): string | null => {
   try {
     const parsedUrl = new URL(url);
@@ -72,8 +38,8 @@ const extractTextFromHtml = (html: string): string => {
   tempDiv.innerHTML = html;
 
   const contentDiv = tempDiv.querySelector('#mw-content-text');
-  if (!contentDiv) {
-    return tempDiv.textContent || '';
+  if (contentDiv === null) {
+    return tempDiv.textContent !== null ? tempDiv.textContent : '';
   }
 
   const elementsToRemove = [
@@ -102,11 +68,13 @@ const extractTextFromHtml = (html: string): string => {
 
   elementsToRemove.forEach((selector) => {
     contentDiv.querySelectorAll(selector).forEach((el) => {
-      el.remove();
+      if (el.parentNode !== null) {
+        el.parentNode.removeChild(el);
+      }
     });
   });
 
-  let text = contentDiv.textContent || '';
+  let text = contentDiv.textContent !== null ? contentDiv.textContent : '';
 
   text = text
     .replace(/\[\d+\]/g, '')
@@ -114,4 +82,39 @@ const extractTextFromHtml = (html: string): string => {
     .trim();
 
   return text;
+};
+
+export const fetchWikipediaContent = async (url: string): Promise<WikipediaContent> => {
+  try {
+    const title = extractTitleFromUrl(url);
+
+    if (title === null) {
+      throw new Error('Invalid Wikipedia URL');
+    }
+
+    const apiUrl = `https://en.wikipedia.org/w/api.php?action=parse&page=${title}&format=json&prop=text&origin=*`;
+
+    const response = await axios.get<WikipediaResponse>(apiUrl);
+
+    if (response.data.error !== undefined) {
+      throw new Error(`Wikipedia API error: ${response.data.error.info}`);
+    }
+
+    if (response.data.parse === undefined) {
+      throw new Error('Failed to parse Wikipedia content');
+    }
+
+    const htmlContent = response.data.parse.text['*'];
+    const plainText = extractTextFromHtml(htmlContent);
+
+    return {
+      title: response.data.parse.title,
+      content: plainText,
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(`Failed to fetch Wikipedia content: ${error.message}`);
+    }
+    throw error;
+  }
 };

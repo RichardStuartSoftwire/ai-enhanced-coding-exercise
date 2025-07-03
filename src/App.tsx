@@ -18,7 +18,7 @@ const App: React.FC = () => {
       </header>
 
       <main>
-        {!flashcardSet ? (
+        {flashcardSet === null ? (
           <InputForm
             setFlashcardSet={setFlashcardSet}
             setLoading={setLoading}
@@ -31,17 +31,12 @@ const App: React.FC = () => {
           />
         )}
 
-        {loading && <div className="loader">Generating flashcards...</div>}
-        {error && <div className="error">{error}</div>}
+        {loading === true && <div className="loader">Generating flashcards...</div>}
+        {error !== null && <div className="error">{error}</div>}
       </main>
 
       <footer>
-        <p>
-          ©
-          {new Date().getFullYear()}
-          {' '}
-          Flashcard Extractor
-        </p>
+        <p>© {new Date().getFullYear()} Flashcard Extractor</p>
       </footer>
     </div>
   );

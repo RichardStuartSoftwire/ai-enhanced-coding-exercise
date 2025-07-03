@@ -13,25 +13,25 @@ const FlashcardViewer: React.FC<FlashcardViewerProps> = ({ flashcardSet, onReset
   const [flipped, setFlipped] = useState<boolean>(false);
   const [viewMode, setViewMode] = useState<'cards' | 'list'>('cards');
 
-  const handleNext = () => {
+  const handleNext = (): void => {
     if (currentIndex < flashcardSet.cards.length - 1) {
       setCurrentIndex(currentIndex + 1);
       setFlipped(false);
     }
   };
 
-  const handlePrevious = () => {
+  const handlePrevious = (): void => {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
       setFlipped(false);
     }
   };
 
-  const handleFlip = () => {
+  const handleFlip = (): void => {
     setFlipped(!flipped);
   };
 
-  const exportAsCSV = () => {
+  const exportAsCSV = (): void => {
     const csvContent = [
       ['Question', 'Answer'],
       ...flashcardSet.cards.map((card) => [card.question, card.answer]),
@@ -52,7 +52,7 @@ const FlashcardViewer: React.FC<FlashcardViewerProps> = ({ flashcardSet, onReset
     document.body.removeChild(link);
   };
 
-  const exportAsJSON = () => {
+  const exportAsJSON = (): void => {
     const jsonContent = JSON.stringify(flashcardSet, null, 2);
     const blob = new Blob([jsonContent], { type: 'application/json' });
     const link = document.createElement('a');
@@ -68,17 +68,14 @@ const FlashcardViewer: React.FC<FlashcardViewerProps> = ({ flashcardSet, onReset
   };
 
   // Handle empty flashcard sets
-  const hasCards = flashcardSet.cards && flashcardSet.cards.length > 0;
+  const hasCards = flashcardSet.cards !== undefined && flashcardSet.cards.length > 0;
   const currentCard = hasCards ? flashcardSet.cards[currentIndex] : null;
 
   return (
     <div className="flashcard-viewer">
       <div className="flashcard-header">
         <h2>{flashcardSet.title}</h2>
-        <p className="source">
-          Source:
-          {flashcardSet.source}
-        </p>
+        <p className="source">Source: {flashcardSet.source}</p>
         <p className="card-count">
           {flashcardSet.cards.length}
           {' '}
@@ -88,14 +85,16 @@ const FlashcardViewer: React.FC<FlashcardViewerProps> = ({ flashcardSet, onReset
 
       <div className="view-controls">
         <button
+          type="button"
           className={viewMode === 'cards' ? 'active' : ''}
-          onClick={() => setViewMode('cards')}
+          onClick={(): void => setViewMode('cards')}
         >
           Card View
         </button>
         <button
+          type="button"
           className={viewMode === 'list' ? 'active' : ''}
-          onClick={() => setViewMode('list')}
+          onClick={(): void => setViewMode('list')}
         >
           List View
         </button>
@@ -104,7 +103,13 @@ const FlashcardViewer: React.FC<FlashcardViewerProps> = ({ flashcardSet, onReset
       {viewMode === 'cards' ? (
         <div className="card-view">
           {hasCards ? (
-            <div className={`flashcard ${flipped ? 'flipped' : ''}`} onClick={handleFlip}>
+            <div
+              className={`flashcard ${flipped === true ? 'flipped' : ''}`}
+              onClick={handleFlip}
+              onKeyDown={(e): void => { if (e.key === 'Enter' || e.key === ' ') handleFlip(); }}
+              role="button"
+              tabIndex={0}
+            >
               <div className="flashcard-inner">
                 <div className="flashcard-front">
                   <p>{currentCard?.question}</p>
@@ -124,8 +129,9 @@ const FlashcardViewer: React.FC<FlashcardViewerProps> = ({ flashcardSet, onReset
 
           <div className="card-navigation">
             <button
+              type="button"
               onClick={handlePrevious}
-              disabled={!hasCards || currentIndex === 0}
+              disabled={hasCards === false || currentIndex === 0}
             >
               Previous
             </button>
@@ -133,8 +139,9 @@ const FlashcardViewer: React.FC<FlashcardViewerProps> = ({ flashcardSet, onReset
               {hasCards ? `${currentIndex + 1} / ${flashcardSet.cards.length}` : '0 / 0'}
             </span>
             <button
+              type="button"
               onClick={handleNext}
-              disabled={!hasCards || currentIndex === flashcardSet.cards.length - 1}
+              disabled={hasCards === false || currentIndex === flashcardSet.cards.length - 1}
             >
               Next
             </button>
@@ -170,13 +177,13 @@ const FlashcardViewer: React.FC<FlashcardViewerProps> = ({ flashcardSet, onReset
       )}
 
       <div className="action-buttons">
-        <button onClick={exportAsCSV} className="export-btn">
+        <button type="button" onClick={exportAsCSV} className="export-btn">
           Export as CSV
         </button>
-        <button onClick={exportAsJSON} className="export-btn">
+        <button type="button" onClick={exportAsJSON} className="export-btn">
           Export as JSON
         </button>
-        <button onClick={onReset} className="reset-btn">
+        <button type="button" onClick={onReset} className="reset-btn">
           Create New Flashcards
         </button>
       </div>

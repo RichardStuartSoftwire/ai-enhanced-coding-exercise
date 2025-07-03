@@ -14,7 +14,9 @@ describe('Wikipedia Service', () => {
       querySelector: jest.fn().mockReturnValue({
         textContent: 'Parsed content',
         querySelectorAll: jest.fn().mockReturnValue([{
-          remove: jest.fn(),
+          parentNode: {
+            removeChild: jest.fn()
+          }
         }]),
       }),
     };

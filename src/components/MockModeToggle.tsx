@@ -28,8 +28,10 @@ export const MockModeToggle: React.FC<MockModeToggleProps> = ({ onChange }) => {
 
   return (
     <div className="mock-mode-toggle">
-      <label className="toggle-switch">
+      <label className="toggle-switch" htmlFor="mock-mode-toggle">
+        <span className="visually-hidden">Toggle between mock and real LLM mode</span>
         <input
+          id="mock-mode-toggle"
           type="checkbox"
           checked={useMock}
           onChange={handleToggle}
@@ -37,10 +39,10 @@ export const MockModeToggle: React.FC<MockModeToggleProps> = ({ onChange }) => {
         <span className="toggle-slider" />
       </label>
       <span className="toggle-label">
-        {useMock ? '🚀 Fast Mock Mode' : '🤖 Real LLM Mode'}
+        {useMock === true ? '🚀 Fast Mock Mode' : '🤖 Real LLM Mode'}
       </span>
       <div className="toggle-tooltip">
-        {useMock
+        {useMock === true
           ? 'Using mock responses (fast, no API calls)'
           : 'Using real AI calls (will be slower)'}
       </div>
