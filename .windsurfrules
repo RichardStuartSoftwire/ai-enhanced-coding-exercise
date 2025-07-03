@@ -1,0 +1,41 @@
+# Project Coding Standards
+
+<typescript_standards>
+- Use strict typing everywhere - no 'any' types allowed
+- Avoid using comments in code
+- Split functionality into smaller files (max 100 lines recommended)
+- Use arrow functions for React components
+- Always include explicit return types for functions
+- Use strict boolean expressions
+- Handle promises properly with no floating/misused promises
+</typescript_standards>
+
+<code_organization>
+- Follow import order: builtin > external > internal > parent > sibling > index
+- Add newlines between import groups
+- Keep line length under 100 characters
+- Use single quotes for strings
+- Always use semicolons
+- No multiple empty lines (max 1)
+- Always include EOF newline
+</code_organization>
+
+<styling_guidelines>
+- Use CSS modules for component-specific styles
+- Follow mobile-first responsive design principles
+- Maintain consistent spacing with object-curly-spacing always
+</styling_guidelines>
+
+<testing_standards>
+- Write tests in Jest with React Testing Library
+- Place tests in the /tests directory with .test.ts(x) or .spec.ts(x) extensions
+- Aim for high test coverage (run tests with `npm test -- --coverage`)
+- Mock CSS imports in tests
+</testing_standards>
+
+<linting_workflow>
+- Run `npm run lint` to check for linting errors
+- Use `npm run lint:fix` to automatically fix linting issues
+- ESLint uses Airbnb TypeScript config with strict typing rules
+- No console.log, debugger, or alert statements in production code
+</linting_workflow>
