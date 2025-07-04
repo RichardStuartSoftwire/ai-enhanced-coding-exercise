@@ -48,7 +48,9 @@
     "proxy": "node server/proxy-server.js",
     "dev": "concurrently \"npm run start\" \"npm run proxy\"",
     "build": "webpack --mode production",
-    "test": "jest"
+    "test": "jest",
+    "lint": "eslint --ext .js,.jsx,.ts,.tsx src/",
+    "lint:fix": "eslint --ext .js,.jsx,.ts,.tsx src/ --fix"
   },
   "eslintConfig": {
     "extends": [
