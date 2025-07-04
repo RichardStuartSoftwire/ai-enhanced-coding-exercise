@@ -1,5 +1,3 @@
-// Helper functions for LLM services
-
 export const truncateContent = (content: string, maxLength: number): string => {
   if (content.length <= maxLength) {
     return content;

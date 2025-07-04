@@ -17,7 +17,6 @@ interface WikipediaContent {
   content: string;
 }
 
-// Helper functions defined once at the top to fix no-use-before-define
 const extractTitleFromUrl = (url: string): string | null => {
   try {
     const parsedUrl = new URL(url);

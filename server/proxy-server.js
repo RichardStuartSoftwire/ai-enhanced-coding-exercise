@@ -15,7 +15,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// Load mock response data from JSON file
 let mockFlashcardResponse;
 try {
   const mockDataPath = path.join(__dirname, 'flashcard_mock.json');
@@ -41,7 +40,7 @@ const inferenceProxy = createProxyMiddleware({
   target: process.env.INFERENCE_SERVER_URL || 'http://localhost:1234',
   changeOrigin: true,
   pathRewrite: {
-    '^/api/v1': '', // Remove /api/v1 prefix when forwarding
+    '^/api/v1': '',
   },
   onProxyReq: (proxyReq, req, res) => {
     console.log('Proxying request to inference server:', req.method, req.url);
@@ -49,7 +48,6 @@ const inferenceProxy = createProxyMiddleware({
   onProxyRes: (proxyRes, req, res) => {
     console.log('Received response from inference server:', proxyRes.statusCode);
 
-    // Handle response data to ensure content is a valid JSON string
     if (req.url.includes('/chat/completions')) {
       const originalBody = [];
       proxyRes.on('data', (chunk) => {
@@ -61,15 +59,12 @@ const inferenceProxy = createProxyMiddleware({
           const bodyString = Buffer.concat(originalBody).toString();
           const bodyJson = JSON.parse(bodyString);
 
-          // Check if content is an object and convert it to a string if needed
           if (bodyJson.choices && bodyJson.choices[0] && bodyJson.choices[0].message) {
             const { content } = bodyJson.choices[0].message;
 
-            // If content is an object, stringify it
             if (content && typeof content === 'object') {
               bodyJson.choices[0].message.content = JSON.stringify(content);
 
-              // Replace the response with our modified version
               const modifiedBody = JSON.stringify(bodyJson);
               res.setHeader('content-length', Buffer.byteLength(modifiedBody));
               res.end(modifiedBody);
@@ -78,7 +73,6 @@ const inferenceProxy = createProxyMiddleware({
           }
         } catch (error) {
           console.error('Error processing proxy response:', error);
-          // Continue with original response if there's an error
         }
       });
     }

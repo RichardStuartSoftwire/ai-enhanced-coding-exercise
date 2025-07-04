@@ -26,7 +26,6 @@ const InputForm: React.FC<InputFormProps> = ({ setFlashcardSet, setLoading, setE
     }
   }, []);
 
-  // Helper functions moved to the top to fix no-use-before-define
   const isValidWikipediaUrl = (url: string): boolean => {
     try {
       const parsedUrl = new URL(url);
@@ -87,7 +86,6 @@ const InputForm: React.FC<InputFormProps> = ({ setFlashcardSet, setLoading, setE
       }
 
       const flashcards = await extractFlashcards(content, undefined, useMockMode);
-      // Wrap in void to fix no-misused-promises
 
       setFlashcardSet({
         title: isUrlInput ? extractTitleFromUrl(input) : 'Custom Text Flashcards',
@@ -101,8 +99,6 @@ const InputForm: React.FC<InputFormProps> = ({ setFlashcardSet, setLoading, setE
       setLoading(false);
     }
   };
-
-  // Helper functions moved to the top of the component
 
   return (
     <div className="input-form-container">

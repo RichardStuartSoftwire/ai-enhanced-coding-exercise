@@ -4,7 +4,6 @@ import React from 'react';
 import FlashcardViewer from '../../src/components/FlashcardViewer';
 import { FlashcardSet } from '../../src/types';
 
-// Mock URL.createObjectURL
 URL.createObjectURL = jest.fn(() => 'mock-blob-url');
 
 describe('FlashcardViewer Component', () => {
@@ -176,7 +175,7 @@ describe('FlashcardViewer Component', () => {
     removeChildSpy.mockRestore();
     global.Blob = originalBlob;
   });
-  
+
   test('exports flashcards as JSON when JSON button is clicked', () => {
     // Setup spies for DOM methods
     const createElementSpy = jest.spyOn(document, 'createElement');
@@ -267,7 +266,6 @@ describe('FlashcardViewer Component', () => {
   test('disables next button on last card', () => {
     render(<FlashcardViewer flashcardSet={mockFlashcardSet} onReset={mockOnReset} />);
 
-    // Navigate to the last card
     const nextButton = screen.getByRole('button', { name: 'Next' });
     fireEvent.click(nextButton);
     fireEvent.click(nextButton);
@@ -289,15 +287,12 @@ describe('FlashcardViewer Component', () => {
   test('switches to card view from list view', () => {
     render(<FlashcardViewer flashcardSet={mockFlashcardSet} onReset={mockOnReset} />);
 
-    // First switch to list view
     const listViewButton = screen.getByRole('button', { name: 'List View' });
     fireEvent.click(listViewButton);
 
-    // Then switch back to card view
     const cardViewButton = screen.getByRole('button', { name: 'Card View' });
     fireEvent.click(cardViewButton);
 
-    // Check that we're back in card view
     expect(screen.getByText('Click to reveal answer')).toBeInTheDocument();
     expect(screen.queryByRole('table')).not.toBeInTheDocument();
   });
