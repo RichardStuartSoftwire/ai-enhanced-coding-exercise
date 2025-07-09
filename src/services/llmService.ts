@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { getLLMConfig } from '../config';
 import { Flashcard } from '../types';
 
-import { needsCORSproxy, truncateContent } from './llmHelpers';
+import { truncateContent } from './llmHelpers';
 import { mockFlashcards } from './mockFlashcards';
 
 // This service is compatible with both OpenAI and LMStudio APIs
@@ -97,7 +97,7 @@ export const extractFlashcards = async (
       'Content-Type': 'application/json',
     };
 
-    if (apiKeyToUse !== '' && isProxyRequired === false) {
+    if (apiKeyToUse !== '') {
       headers.Authorization = `Bearer ${apiKeyToUse}`;
     }
 
