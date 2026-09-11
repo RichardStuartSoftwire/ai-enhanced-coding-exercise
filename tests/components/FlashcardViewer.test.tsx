@@ -326,4 +326,49 @@ describe('FlashcardViewer Component', () => {
     expect(screen.getByText('0 / 0')).toBeInTheDocument();
     expect(screen.queryByText('No flashcards available')).toBeInTheDocument();
   });
+
+  test('displays imported flashcards correctly', () => {
+    const importedFlashcardSet: FlashcardSet = {
+      title: 'Imported Flashcards',
+      source: 'Uploaded file',
+      cards: [
+        { id: 'imported-0', question: 'Imported Question 1', answer: 'Imported Answer 1' },
+        { id: 'imported-1', question: 'Imported Question 2', answer: 'Imported Answer 2' }
+      ],
+      createdAt: new Date()
+    };
+    
+    render(<FlashcardViewer flashcardSet={importedFlashcardSet} onReset={mockOnReset} />);
+    
+    expect(screen.getByText('Imported Flashcards')).toBeInTheDocument();
+    expect(screen.getByText('Source: Uploaded file')).toBeInTheDocument();
+    expect(screen.getByText('2 flashcards generated')).toBeInTheDocument();
+    expect(screen.getByText('Imported Question 1')).toBeInTheDocument();
+  });
+
+  test('handles imported flashcards with generated IDs', () => {
+    const importedFlashcardSet: FlashcardSet = {
+      title: 'CSV Import',
+      source: 'Uploaded file',
+      cards: [
+        { id: 'imported-0', question: 'CSV Question 1', answer: 'CSV Answer 1' },
+        { id: 'imported-1', question: 'CSV Question 2', answer: 'CSV Answer 2' },
+        { id: 'imported-2', question: 'CSV Question 3', answer: 'CSV Answer 3' }
+      ],
+      createdAt: new Date()
+    };
+    
+    render(<FlashcardViewer flashcardSet={importedFlashcardSet} onReset={mockOnReset} />);
+    
+    // Only first card is visible in card view
+    expect(screen.getByText('CSV Question 1')).toBeInTheDocument();
+    
+    // Test navigation through imported cards
+    const nextButton = screen.getByRole('button', { name: 'Next' });
+    fireEvent.click(nextButton);
+    expect(screen.getByText('CSV Question 2')).toBeInTheDocument();
+    
+    fireEvent.click(nextButton);
+    expect(screen.getByText('CSV Question 3')).toBeInTheDocument();
+  });
 });
