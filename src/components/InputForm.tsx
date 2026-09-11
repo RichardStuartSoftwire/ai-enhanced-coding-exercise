@@ -15,8 +15,8 @@ interface InputFormProps {
 const InputForm: React.FC<InputFormProps> = ({ setFlashcardSet, setLoading, setError }) => {
   const [isUrlInput, setIsUrlInput] = useState(true);
   const [input, setInput] = useState('');
-  const [useMockMode, setUseMockMode] = useState(false);
-  
+  const [useMockMode, setUseMockMode] = useState(true);
+
   useEffect(() => {
     const savedSetting = localStorage.getItem('use_mock_mode');
     if (savedSetting) {
@@ -35,8 +35,11 @@ const InputForm: React.FC<InputFormProps> = ({ setFlashcardSet, setLoading, setE
     }
 
     const config = getLLMConfig();
-    
-    if (!config.defaultApiKey || !config.defaultApiKey.trim()) {
+
+    if (
+      !useMockMode
+      && (config.defaultApiKey === undefined || config.defaultApiKey === '' || config.defaultApiKey.trim() === '')
+    ) {
       setError('Please set your API key in LLM Settings');
       return;
     }

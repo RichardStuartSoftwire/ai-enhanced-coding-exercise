@@ -1,6 +1,7 @@
-import { Flashcard } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 import { getLLMConfig } from '../config';
+import { mockFlashcards } from './mockFlashcards';
+import { Flashcard } from '../types';
 
 // This service is compatible with both OpenAI and LMStudio APIs
 
@@ -34,6 +35,14 @@ export const extractFlashcards = async (
   apiKey?: string,
   useMock: boolean = false
 ): Promise<Flashcard[]> => {
+  if (useMock) {
+    return mockFlashcards.map((card) => ({
+      id: uuidv4(),
+      question: card.question,
+      answer: card.answer,
+    }));
+  }
+
   const config = getLLMConfig();
   try {
     if (!config.baseUrl) {

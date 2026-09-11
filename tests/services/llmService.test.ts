@@ -114,36 +114,15 @@ describe('LLM Service', () => {
   });
   
   test('uses mock mode correctly', async () => {
-    const mockResponse = {
-      choices: [
-        {
-          message: {
-            content: JSON.stringify({
-              flashcards: [
-                { question: 'Mock Question', answer: 'Mock Answer' }
-              ]
-            })
-          }
-        }
-      ]
-    };
+    const result = await extractFlashcards(mockContent, mockApiKey, true);
 
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
-      ok: true,
-      json: jest.fn().mockResolvedValueOnce(mockResponse)
-    });
-
-    await extractFlashcards(mockContent, mockApiKey, true);
-
-    // Verify that the URL includes the mock parameter and headers include X-Use-Mock
-    expect(global.fetch).toHaveBeenCalledWith(
-      expect.stringContaining('?mock=true'),
+    expect(global.fetch).not.toHaveBeenCalled();
+    expect(result).toEqual(expect.arrayContaining([
       expect.objectContaining({
-        headers: expect.objectContaining({
-          'X-Use-Mock': 'true'
-        })
-      })
-    );
+        id: 'mocked-uuid',
+        question: 'What is a flashcard?',
+      }),
+    ]));
   });
   
   test('truncates long content correctly', async () => {

@@ -10,10 +10,14 @@ export const MockModeToggle: React.FC<MockModeToggleProps> = ({ onChange }) => {
 
   useEffect(() => {
     const savedSetting = localStorage.getItem('use_mock_mode');
-    if (savedSetting) {
-      setUseMock(savedSetting === 'true');
+    if (savedSetting !== null && savedSetting !== '') {
+      const savedUseMock = savedSetting === 'true';
+      setUseMock(savedUseMock);
+      onChange(savedUseMock);
+    } else {
+      onChange(true);
     }
-  }, []);
+  }, [onChange]);
 
   const handleToggle = () => {
     const newValue = !useMock;

@@ -103,6 +103,8 @@ describe('InputForm Component', () => {
     const inputField = screen.getByPlaceholderText('https://en.wikipedia.org/wiki/Artificial_intelligence');
     fireEvent.change(inputField, { target: { value: 'https://en.wikipedia.org/wiki/React_(JavaScript_library)' } });
 
+    fireEvent.click(screen.getByRole('checkbox'));
+
     const submitButton = screen.getByRole('button', { name: 'Generate Flashcards' });
     fireEvent.click(submitButton);
 
